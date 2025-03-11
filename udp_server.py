@@ -29,6 +29,9 @@ def main():
     # Permitir reutilização da porta
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
+    if(sys.platform.startswith('win')):
+        port=9999
+
     try:
         try:
             server_socket.bind((host, port))
@@ -53,19 +56,25 @@ def main():
         print("Aguardando requisições de validação de CPF...")
         
         while True:
-            # Receber dados
-            data, address = server_socket.recvfrom(1024)
-            cpf = data.decode()
-            
-            print(f"Conexão de {address}")
-            print(f"CPF recebido: {cpf}")
-            
-            # Validar CPF
-            result = "CPF válido" if validate_cpf(cpf) else "CPF inválido"
-            print(f"Resultado: {result}")
-            
-            # Enviar resposta
-            server_socket.sendto(result.encode(), address)
+    
+            try:
+                # Receber dados
+                server_socket.settimeout(1.0)
+                data, address = server_socket.recvfrom(1024)
+                cpf = data.decode()
+                
+                print(f"Conexão de {address}")
+                print(f"CPF recebido: {cpf}")
+                
+                # Validar CPF
+                result = "CPF válido" if validate_cpf(cpf) else "CPF inválido"
+                print(f"Resultado: {result}")
+                
+                # Enviar resposta
+                server_socket.sendto(result.encode(), address)
+                
+            except socket.timeout:
+                pass
     
     except Exception as e:
         print(f"Erro no servidor: {e}")
