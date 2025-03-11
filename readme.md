@@ -30,7 +30,7 @@ O servidor TCP:
 - Recebe strings de CPF
 - Valida os CPFs recebidos
 - Retorna "Valid CPF" ou "Invalid CPF" para o cliente
-- Trata erros graciosamente, incluindo tentativas automáticas de usar portas alternativas quando a porta padrão está ocupada
+- Trata erros, incluindo tentativas automáticas de usar portas alternativas quando a porta padrão está ocupada
 - Registra toda a atividade no console
 
 ### Cliente TCP (`tcp_client.py`)
