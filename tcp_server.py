@@ -3,83 +3,83 @@ import signal
 import sys
 from cpf_validator import validate_cpf
 
-# Global variables for clean shutdown
+# Variáveis globais para um desligamento limpo
 server_socket = None
 
 def signal_handler(sig, frame):
-    """Handle keyboard interrupts gracefully"""
-    print("\nServer shutting down...")
+    """Tratar interrupções do teclado de forma graciosa"""
+    print("\nServidor desligando...")
     if server_socket:
         server_socket.close()
     sys.exit(0)
 
 def main():
-    """Main function that runs the TCP server"""
+    """Função principal que executa o servidor TCP"""
     global server_socket
     
     host = 'localhost'
     port = 65432
     
-    # Register signal handlers
+    # Registrar os manipuladores de sinais
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     
-    # Create TCP socket
+    # Criar o socket TCP
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # Allow port reuse
+    # Permitir reutilização da porta
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
     try:
         try:
             server_socket.bind((host, port))
         except socket.error as e:
-            if e.errno == 98 or e.errno == 10048:  # Address already in use (Linux/Windows)
-                print(f"Error: Port {port} is already in use.")
-                print("Please choose a different port or stop the existing server.")
+            if e.errno == 98 or e.errno == 10048:  # Endereço já em uso (Linux/Windows)
+                print(f"Erro: A porta {port} já está em uso.")
+                print("Escolha uma porta diferente ou pare o servidor existente.")
                 alt_port = port + 1
-                print(f"Attempting to use alternative port {alt_port}...")
+                print(f"Tentando usar a porta alternativa {alt_port}...")
                 try:
                     server_socket.bind((host, alt_port))
                     port = alt_port
-                    print(f"Successfully bound to alternative port {port}")
+                    print(f"Conectado com sucesso à porta alternativa {port}")
                 except socket.error:
-                    print("Alternative port also unavailable. Exiting.")
+                    print("A porta alternativa também está indisponível. Saindo.")
                     sys.exit(1)
             else:
-                print(f"Socket error: {e}")
+                print(f"Erro no socket: {e}")
                 sys.exit(1)
                 
         server_socket.listen(5)
         
-        print(f"TCP Server started on {host}:{port}")
-        print("Waiting for CPF validation requests...")
+        print(f"Servidor TCP iniciado em {host}:{port}")
+        print("Aguardando requisições de validação de CPF...")
         
         while True:
-            # Accept connection
+            # Aceitar conexão
             connection, address = server_socket.accept()
-            print(f"Connection from {address}")
+            print(f"Conexão de {address}")
             
             with connection:
-                # Receive CPF
+                # Receber CPF
                 data = connection.recv(1024).decode()
                 if not data:
                     continue
                     
-                print(f"CPF received: {data}")
+                print(f"CPF recebido: {data}")
                 
-                # Validate CPF
-                result = "Valid CPF" if validate_cpf(data) else "Invalid CPF"
-                print(f"Result: {result}")
+                # Validar CPF
+                result = "CPF válido" if validate_cpf(data) else "CPF inválido"
+                print(f"Resultado: {result}")
                 
-                # Send response
+                # Enviar resposta
                 connection.sendall(result.encode())
     
     except Exception as e:
-        print(f"Server error: {e}")
+        print(f"Erro no servidor: {e}")
     finally:
         if server_socket:
             server_socket.close()
-            print("Server socket closed")
+            print("Socket do servidor fechado")
 
 if __name__ == "__main__":
     main()

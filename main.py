@@ -3,32 +3,32 @@ import sys
 import subprocess
 
 def display_menu():
-    """Displays the main menu"""
+    """Exibe o menu principal"""
     os.system('cls' if os.name == 'nt' else 'clear')
     print("="*50)
-    print("     CPF VALIDATION SYSTEM (TCP/UDP)")
+    print("     SISTEMA DE VALIDAÇÃO DE CPF (TCP/UDP)")
     print("="*50)
-    print("\nChoose an option:")
-    print("1. Start TCP Server")
-    print("2. Start TCP Client")
-    print("3. Start UDP Server")
-    print("4. Start UDP Client")
-    print("5. Exit")
-    print("\nEnter the number of the desired option:")
+    print("\nEscolha uma opção:")
+    print("1. Iniciar Servidor TCP")
+    print("2. Iniciar Cliente TCP")
+    print("3. Iniciar Servidor UDP")
+    print("4. Iniciar Cliente UDP")
+    print("5. Sair")
+    print("\nDigite o número da opção desejada:")
 
 def start_program(script_name):
-    """Start a program in a new process"""
+    """Inicia um programa em um novo processo"""
     try:
-        # Start the specified script in a new process
+        # Inicia o script especificado em um novo processo
         subprocess.Popen([sys.executable, script_name])
-        print(f"Starting {script_name}...")
-        input("Press ENTER to return to menu...")
+        print(f"Iniciando {script_name}...")
+        input("Pressione ENTER para voltar ao menu...")
     except Exception as e:
-        print(f"Error starting {script_name}: {e}")
-        input("Press ENTER to continue...")
+        print(f"Erro ao iniciar {script_name}: {e}")
+        input("Pressione ENTER para continuar...")
 
 def main():
-    """Main function that controls program flow"""
+    """Função principal que controla o fluxo do programa"""
     while True:
         display_menu()
         option = input().strip()
@@ -46,11 +46,11 @@ def main():
             start_program('udp_client.py')
             
         elif option == '5':
-            print("\nExiting program...")
+            print("\nSaindo do programa...")
             sys.exit(0)
             
         else:
-            print("\nInvalid option! Press ENTER to try again...")
+            print("\nOpção inválida! Pressione ENTER para tentar novamente...")
             input()
 
 if __name__ == "__main__":

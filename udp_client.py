@@ -3,65 +3,65 @@ import sys
 
 def validate_cpf_udp(cpf, host='localhost', port=65433):
     """
-    Sends a CPF for validation to the UDP server
+    Envia um CPF para validação no servidor UDP
     
     Args:
-        cpf (str): CPF to be validated
-        host (str): Server hostname or IP
-        port (int): Server port
+        cpf (str): CPF a ser validado
+        host (str): Nome do host ou IP do servidor
+        port (int): Porta do servidor
     
     Returns:
-        str: Server response
+        str: Resposta do servidor
     """
-    # Create UDP socket
+    # Criar socket UDP
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    client.settimeout(5)  # Set timeout to prevent hanging
+    client.settimeout(5)  # Definir o tempo de espera para evitar bloqueios
     
     try:
-        # Send CPF
+        # Enviar CPF
         client.sendto(cpf.encode(), (host, port))
         
-        # Receive response
+        # Receber resposta
         response, _ = client.recvfrom(1024)
         return response.decode()
         
     except socket.timeout:
-        return "ERROR: Response timeout exceeded."
+        return "ERRO: Tempo de resposta excedido."
     except Exception as e:
-        return f"ERROR: {str(e)}"
+        return f"ERRO: {str(e)}"
     finally:
         client.close()
 
 def main():
-    """Main function for the UDP client"""
-    print("CPF Validation UDP Client")
+    """Função principal para o cliente UDP"""
+    print("Cliente de Validação de CPF UDP")
     print("="*30)
     
-    # Get server details (with defaults)
-    host = input("Enter server hostname (default: localhost): ").strip() or 'localhost'
+    # Obter detalhes do servidor (com valores padrão)
+    host = input("Digite o nome do host do servidor (padrão: localhost): ").strip() or 'localhost'
     
     try:
-        port_input = input("Enter server port (default: 65433): ").strip()
+        port_input = input("Digite a porta do servidor (padrão: 65433): ").strip()
         port = int(port_input) if port_input else 65433
     except ValueError:
-        print("Invalid port number. Using default: 65433")
+        print("Número de porta inválido. Usando o valor padrão: 65433")
         port = 65433
     
-    print(f"\nConnecting to {host}:{port}")
-    print("Type 'exit' to quit")
+    print(f"\nConectando a {host}:{port}")
+    print("Digite 'exit' para sair")
     
     while True:
-        # Get CPF from user
-        cpf = input("\nEnter CPF for validation: ")
+        # Obter CPF do usuário
+        cpf = input("\nDigite o CPF para validação: ")
         
         if cpf.lower() == 'exit':
-            print("Exiting...")
+            print("Saindo...")
             break
             
-        # Send CPF for validation
-        print(f"Sending CPF: {cpf}")
+        # Enviar CPF para validação
+        print(f"Enviando CPF: {cpf}")
         response = validate_cpf_udp(cpf, host, port)
-        print(f"Server response: {response}")
+        print(f"Resposta do servidor: {response}")
 
 if __name__ == "__main__":
     main()
