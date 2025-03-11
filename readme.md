@@ -105,20 +105,20 @@ O sistema implementa tratamento robusto de erros, incluindo:
 
 ### Validação de CPF Válido
 ```
-Enter CPF for validation: 529.982.247-25
-Server response: Valid CPF
+Digite o CPF para validação: 529.982.247-25
+Resposta do servidor: CPF Válido
 ```
 
 ### Validação de CPF Inválido
 ```
-Enter CPF for validation: 123.456.789-00
-Server response: Invalid CPF
+Digite o CPF para validação: 123.456.789-00
+Resposta do servidor: CPF Inválido
 ```
 
 ### Saída do Programa
 ```
-Enter CPF for validation: exit
-Exiting...
+Digite o CPF para validação: exit
+Saindo...
 ```
 
 ## Requisitos
