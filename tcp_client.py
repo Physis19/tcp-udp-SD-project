@@ -13,18 +13,15 @@ def validate_cpf_tcp(cpf, host='localhost', port=65432):
     Returns:
         str: Resposta do servidor
     """
-    # Criar o socket TCP
+
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.settimeout(5)  # Definir o tempo limite para evitar travamento
     
     try:
-        # Conectar ao servidor
         client.connect((host, port))
         
-        # Enviar CPF
         client.sendall(cpf.encode())
         
-        # Receber resposta
         response = client.recv(1024).decode()
         return response
         
@@ -42,7 +39,6 @@ def main():
     print("Cliente de Validação de CPF TCP")
     print("="*30)
     
-    # Obter os detalhes do servidor (com valores padrão)
     host = input("Digite o nome do servidor (padrão: localhost): ").strip() or 'localhost'
     
     try:
@@ -56,14 +52,12 @@ def main():
     print("Digite 'exit' para sair")
     
     while True:
-        # Obter CPF do usuário
         cpf = input("\nDigite o CPF para validação: ")
         
         if cpf.lower() == 'exit':
             print("Saindo...")
             break
             
-        # Enviar CPF para validação
         print(f"Enviando CPF: {cpf}")
         response = validate_cpf_tcp(cpf, host, port)
         print(f"Resposta do servidor: {response}")

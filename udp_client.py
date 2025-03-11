@@ -13,15 +13,11 @@ def validate_cpf_udp(cpf, host='localhost', port=65433):
     Returns:
         str: Resposta do servidor
     """
-    # Criar socket UDP
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     client.settimeout(5)  # Definir o tempo de espera para evitar bloqueios
     
     try:
-        # Enviar CPF
-        client.sendto(cpf.encode(), (host, port))
-        
-        # Receber resposta
+        client.sendto(cpf.encode(), (host, port))  
         response, _ = client.recvfrom(1024)
         return response.decode()
         
@@ -37,7 +33,6 @@ def main():
     print("Cliente de Validação de CPF UDP")
     print("="*30)
     
-    # Obter detalhes do servidor (com valores padrão)
     host = input("Digite o nome do host do servidor (padrão: localhost): ").strip() or 'localhost'
     
     try:
@@ -51,14 +46,12 @@ def main():
     print("Digite 'exit' para sair")
     
     while True:
-        # Obter CPF do usuário
         cpf = input("\nDigite o CPF para validação: ")
         
         if cpf.lower() == 'exit':
             print("Saindo...")
             break
             
-        # Enviar CPF para validação
         print(f"Enviando CPF: {cpf}")
         response = validate_cpf_udp(cpf, host, port)
         print(f"Resposta do servidor: {response}")

@@ -3,7 +3,6 @@ import signal
 import sys
 from cpf_validator import validate_cpf
 
-# Variáveis globais para um desligamento limpo
 server_socket = None
 
 def signal_handler(sig, frame):
@@ -20,13 +19,10 @@ def main():
     host = 'localhost'
     port = 65433
     
-    # Registrar os manipuladores de sinais
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     
-    # Criar o socket UDP
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # Permitir reutilização da porta
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
     if(sys.platform.startswith('win')):
@@ -36,7 +32,7 @@ def main():
         try:
             server_socket.bind((host, port))
         except socket.error as e:
-            if e.errno == 98 or e.errno == 10048:  # Endereço já em uso (Linux/Windows)
+            if e.errno == 98 or e.errno == 10048:  
                 print(f"Erro: A porta {port} já está em uso.")
                 print("Escolha uma porta diferente ou pare o servidor existente.")
                 alt_port = port + 1
@@ -58,7 +54,6 @@ def main():
         while True:
     
             try:
-                # Receber dados
                 server_socket.settimeout(1.0)
                 data, address = server_socket.recvfrom(1024)
                 cpf = data.decode()
@@ -66,11 +61,9 @@ def main():
                 print(f"Conexão de {address}")
                 print(f"CPF recebido: {cpf}")
                 
-                # Validar CPF
                 result = "CPF válido" if validate_cpf(cpf) else "CPF inválido"
                 print(f"Resultado: {result}")
                 
-                # Enviar resposta
                 server_socket.sendto(result.encode(), address)
                 
             except socket.timeout:
