@@ -7,7 +7,7 @@ from cpf_validator import validate_cpf
 server_socket = None
 
 def signal_handler(sig, frame):
-    """Tratar interrupções do teclado de forma graciosa"""
+    """Tratar interrupções do teclado"""
     print("\nServidor desligando...")
     if server_socket:
         server_socket.close()
