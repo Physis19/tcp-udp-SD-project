@@ -1,71 +1,135 @@
 # Sistema de Validação de CPF (TCP/UDP)
 
-Este projeto implementa um sistema distribuído para validação de CPF (Cadastro de Pessoas Físicas) utilizando dois protocolos diferentes: TCP e UDP. O sistema consiste em programas de cliente e servidor separados para cada protocolo.
+Este projeto implementa um sistema distribuído para validação de CPF (Cadastro de Pessoas Físicas) utilizando dois protocolos diferentes: TCP e UDP. O sistema consiste em programas de cliente e servidor independentes para cada protocolo, permitindo a comunicação em rede para validação de números de CPF.
 
 ## Estrutura do Projeto
 
-O projeto está estruturado da seguinte forma:
+O projeto está estruturado em componentes separados e independentes:
 
-- `cpf_validator.py`: Módulo com a função de validação de CPF
-- `tcp_server.py`: Servidor TCP para validação de CPF
-- `tcp_client.py`: Cliente TCP para envio de CPFs
-- `udp_server.py`: Servidor UDP para validação de CPF
-- `udp_client.py`: Cliente UDP para envio de CPFs
-- `menu.py`: Interface para iniciar os diferentes componentes do sistema
+- `cpf_validator.py`: Módulo com a lógica de validação de CPF
+- `tcp_server.py`: Servidor que valida CPFs usando o protocolo TCP
+- `tcp_client.py`: Cliente que envia CPFs para validação usando o protocolo TCP
+- `udp_server.py`: Servidor que valida CPFs usando o protocolo UDP
+- `udp_client.py`: Cliente que envia CPFs para validação usando o protocolo UDP
+
+## Funcionamento Detalhado
+
+### Validação de CPF (`cpf_validator.py`)
+
+Este módulo contém a função `validate_cpf(cpf)` que implementa a lógica de validação de acordo com as regras da Receita Federal Brasileira. A validação inclui:
+
+- Verificação do formato (11 dígitos)
+- Cálculo e verificação dos dígitos verificadores
+- Rejeição de sequências repetitivas (ex: 11111111111)
+
+### Servidor TCP (`tcp_server.py`)
+
+O servidor TCP:
+- Inicializa em `localhost:65432` por padrão
+- Aceita conexões de clientes TCP
+- Recebe strings de CPF
+- Valida os CPFs recebidos
+- Retorna "Valid CPF" ou "Invalid CPF" para o cliente
+- Trata erros graciosamente, incluindo tentativas automáticas de usar portas alternativas quando a porta padrão está ocupada
+- Registra toda a atividade no console
+
+### Cliente TCP (`tcp_client.py`)
+
+O cliente TCP:
+- Conecta-se ao servidor TCP (padrão: `localhost:65432`)
+- Permite ao usuário inserir um CPF para validação
+- Envia o CPF ao servidor
+- Exibe a resposta do servidor
+- Implementa timeout para evitar bloqueio indefinido
+- Trata erros de conexão e comunicação
+
+### Servidor UDP (`udp_server.py`)
+
+O servidor UDP:
+- Inicializa em `localhost:65433` por padrão
+- Escuta datagramas UDP contendo CPFs para validação
+- Valida os CPFs recebidos
+- Retorna "Valid CPF" ou "Invalid CPF" como resposta
+- Implementa tratamento de portas ocupadas (tenta automaticamente usar a porta seguinte)
+- Registra toda a atividade no console
+
+### Cliente UDP (`udp_client.py`)
+
+O cliente UDP:
+- Conecta-se ao servidor UDP (padrão: `localhost:65433`)
+- Permite ao usuário inserir um CPF para validação
+- Envia o CPF ao servidor em um datagrama UDP
+- Exibe a resposta do servidor
+- Implementa timeout para evitar bloqueio indefinido
+- Trata erros de comunicação
+
 
 ## Como Executar
 
-Você pode executar os componentes do sistema de duas maneiras:
+Para executar o sistema, você precisa iniciar o servidor e o cliente correspondente em janelas de terminal separadas:
 
-### 1. Utilizando o Menu
-
-Execute o `menu.py` para acessar uma interface que permite iniciar qualquer componente do sistema:
-
-```
-python menu.py
-```
-
-### 2. Executando os Componentes Diretamente
-
-Cada componente pode ser executado independentemente:
-
-**Servidor TCP:**
-```
+### Executando o Servidor TCP:
+```bash
 python tcp_server.py
 ```
+O servidor TCP iniciará na porta 65432. Se essa porta estiver ocupada, ele tentará automaticamente usar a porta 65433.
 
-**Cliente TCP:**
-```
+### Executando o Cliente TCP:
+```bash
 python tcp_client.py
 ```
+O cliente solicitará o host e porta do servidor (pressione Enter para usar os valores padrão) e então permitirá que você digite CPFs para validação.
 
-**Servidor UDP:**
-```
+### Executando o Servidor UDP:
+```bash
 python udp_server.py
 ```
+O servidor UDP iniciará na porta 65433. Se essa porta estiver ocupada, ele tentará automaticamente usar a porta 65434.
 
-**Cliente UDP:**
-```
+### Executando o Cliente UDP:
+```bash
 python udp_client.py
 ```
+O cliente solicitará o host e porta do servidor (pressione Enter para usar os valores padrão) e então permitirá que você digite CPFs para validação.
 
-## Características do Sistema
+## Tratamento de Erros
 
-- **Distribuído**: Cliente e servidor são programas separados que se comunicam pela rede
-- **Protocolos Independentes**: Implementações TCP e UDP completamente separadas
-- **Validação de CPF**: Implementa validação de acordo com as regras da Receita Federal brasileira
-- **Tratamento de Erros**: Gerenciamento adequado de timeouts e erros de conexão
-- **Encerramento Limpo**: Sistema gerencia interrupções e libera recursos corretamente
+O sistema implementa tratamento robusto de erros, incluindo:
+
+- **Portas ocupadas**: Servidores tentam automaticamente usar portas alternativas
+- **Timeouts**: Clientes não bloqueiam indefinidamente esperando resposta
+- **Conexões recusadas**: Mensagens de erro claras quando não é possível conectar
+- **Interrupções**: Gerenciamento adequado de sinais como SIGINT (Ctrl+C)
+
+## Exemplos de Uso
+
+### Validação de CPF Válido
+```
+Digite o CPF para validação: 529.982.247-25
+Resposta do servidor: CPF Válido
+```
+
+### Validação de CPF Inválido
+```
+Digite o CPF para validação: 123.456.789-00
+Resposta do servidor: CPF Inválido
+```
+
+### Saída do Programa
+```
+Digite o CPF para validação: exit
+Saindo...
+```
 
 ## Requisitos
 
-- Python 3.6+
-- Nenhuma biblioteca adicional necessária (utiliza apenas módulos da biblioteca padrão)
+- Python 3.6 ou superior
+- Nenhuma biblioteca adicional necessária (utiliza apenas módulos da biblioteca padrão Python)
+- Sistemas operacionais suportados: Windows, Linux, macOS
 
-## Funcionamento
+## Considerações Técnicas
 
-1. Inicie o servidor (TCP ou UDP)
-2. Em outra janela de terminal, inicie o cliente correspondente
-3. No cliente, digite um CPF para validação
-4. O servidor processará o CPF e retornará o resultado
-5. Digite 'exit' no cliente para encerrar a aplicação
+- **Sockets**: Implementação baseada na biblioteca `socket` padrão do Python
+- **Tratamento de Sinais**: Gerenciamento adequado de sinais para encerramento limpo
+- **Codificação**: Comunicação usando codificação UTF-8
+- **Reutilização de Portas**: Configuração de sockets para permitir reutilização de portas (SO_REUSEADDR)
