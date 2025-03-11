@@ -63,19 +63,6 @@ O cliente UDP:
 - Implementa timeout para evitar bloqueio indefinido
 - Trata erros de comunicação
 
-## Diferenças entre TCP e UDP neste projeto
-
-### TCP (Transmission Control Protocol)
-- **Orientado a conexão**: Estabelece uma conexão antes de enviar dados
-- **Confiável**: Garante entrega e ordem dos pacotes
-- **Mais overhead**: Requer mais recursos devido aos mecanismos de controle
-- **Implementação**: Usa socket.SOCK_STREAM e exige estabelecimento de conexão
-
-### UDP (User Datagram Protocol)
-- **Sem conexão**: Não estabelece conexão antes de enviar dados
-- **Não confiável**: Não garante entrega ou ordem dos pacotes
-- **Mais rápido**: Menos overhead, ideal para operações simples
-- **Implementação**: Usa socket.SOCK_DGRAM e envia datagramas sem conexão prévia
 
 ## Como Executar
 
